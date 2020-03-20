@@ -96,14 +96,7 @@ export default function Signup({ signup }) {
               </Text>
               <Button text="submit" onPress={props.handleSubmit} />
               <Text style={styles.centerText}>OR</Text>
-              <Button
-                text="Sign up with Google"
-                onPress={() =>
-                  fetch(constants.urls.google).then(() => {
-                    console.log("fetched");
-                  })
-                }
-              />
+              <Button text="Sign up with Google" onPress={signup} />
             </View>
           )}
         </Formik>
