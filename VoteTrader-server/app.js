@@ -4,13 +4,8 @@ const mongoose = require("mongoose");
 const keys = require("./config/keys");
 
 
-
 const app = express();
 app.use(express.json())
-
-
-app.set("view engine", "ejs");
-
 
 mongoose.connect(keys.mongodb.dbURI, () => {
   console.log("connected to mongodb");
