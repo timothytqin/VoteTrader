@@ -15,7 +15,8 @@ import { globalStyles, images } from "../styles/global";
 import Button from "../components/Button";
 
 const LoginSchema = Yup.object({
-  username: Yup.string()
+  email: Yup.string()
+    .email()
     .required()
     .min(3),
   password: Yup.string()
@@ -23,13 +24,13 @@ const LoginSchema = Yup.object({
     .min(6)
 });
 
-export default function Login({ login }) {
+export default function Login({ login, googleAuth }) {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ ...globalStyles.container, ...styles.form }}>
         <Image style={styles.logo} source={images.corona} />
         <Formik
-          initialValues={{ username: "", password: "" }}
+          initialValues={{ email: "", password: "" }}
           validationSchema={LoginSchema}
           onSubmit={(values, actions) => {
             actions.resetForm();
@@ -40,12 +41,12 @@ export default function Login({ login }) {
             <View>
               <TextInput
                 style={globalStyles.input}
-                placeholder="Username"
-                onChangeText={props.handleChange("username")}
-                value={props.values.username}
+                placeholder="Email"
+                onChangeText={props.handleChange("email")}
+                value={props.values.email}
               />
               <Text style={globalStyles.errorText}>
-                {props.touched.username && props.errors.username}
+                {props.touched.email && props.errors.email}
               </Text>
               <TextInput
                 style={globalStyles.input}
@@ -58,6 +59,15 @@ export default function Login({ login }) {
                 {props.touched.password && props.errors.password}
               </Text>
               <Button text="submit" onPress={props.handleSubmit} />
+              <Text style={globalStyles.orText}>OR</Text>
+              <Button
+                text="Sign in with Google"
+                onPress={() => {
+                  googleAuth().then(res => {
+                    login(res);
+                  });
+                }}
+              />
             </View>
           )}
         </Formik>

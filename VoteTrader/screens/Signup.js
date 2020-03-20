@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
+// import AES from "crypto-js/aes";
+// import SHA256 from "crypto-js/sha256";
 
 import { globalStyles, images } from "../styles/global";
 import Button from "../components/Button";
@@ -36,7 +38,7 @@ const SignupSchema = Yup.object({
     })
 });
 
-export default function Signup({ signup }) {
+export default function Signup({ signup, googleAuth }) {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ ...globalStyles.container, ...styles.form }}>
@@ -51,6 +53,7 @@ export default function Signup({ signup }) {
           validationSchema={SignupSchema}
           onSubmit={(values, actions) => {
             actions.resetForm();
+            // values.password = SHA256(values.password);
             signup(values);
           }}
         >
@@ -95,8 +98,15 @@ export default function Signup({ signup }) {
                 {props.touched.passwordRepeat && props.errors.passwordRepeat}
               </Text>
               <Button text="submit" onPress={props.handleSubmit} />
-              <Text style={styles.centerText}>OR</Text>
-              <Button text="Sign up with Google" onPress={signup} />
+              <Text style={globalStyles.orText}>OR</Text>
+              <Button
+                text="Sign up with Google"
+                onPress={() => {
+                  googleAuth().then(res => {
+                    signup(res);
+                  });
+                }}
+              />
             </View>
           )}
         </Formik>
@@ -110,10 +120,5 @@ const styles = StyleSheet.create({
   logo: {
     height: 90,
     width: 340
-  },
-  centerText: {
-    textAlign: "center",
-    marginVertical: 30,
-    fontSize: 20
   }
 });

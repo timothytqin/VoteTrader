@@ -18,8 +18,11 @@ export const globalStyles = StyleSheet.create({
     color: "crimson",
     fontWeight: "bold",
     marginLeft: 15
-    // marginBottom: 10,
-    // marginTop: 6
+  },
+  orText: {
+    textAlign: "center",
+    marginVertical: 30,
+    fontSize: 20
   }
 });
 

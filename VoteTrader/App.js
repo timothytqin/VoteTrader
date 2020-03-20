@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { AsyncStorage, StyleSheet, Text, View } from "react-native";
+import { Platform, AsyncStorage, StyleSheet, Text, View } from "react-native";
 import * as AppAuth from "expo-app-auth";
 
 import Login from "./screens/Login";
 import Signup from "./screens/Signup";
+import Home from "./screens/Home";
+
 import { globalStyles } from "./styles/global";
 import { httpPostOptions } from "./shared/http";
 import { constants } from "./shared/constants";
+
+export const isAndroid = () => Platform.OS === "android";
 
 export default function App() {
   let [authState, setAuthState] = useState(null);
@@ -20,22 +24,51 @@ export default function App() {
     })();
   }, []);
 
-  const signup = async () => {
+  const googleAuth = async () => {
     const authState = await signInAsync();
-    setAuthState(_authState);
+    setAuthState(authState);
+
+    const model = await fetch(
+      "https://www.googleapis.com/oauth2/v3/userinfo?access_token=" +
+        authState.accessToken
+    )
+      .then(res => res.json())
+      .then(res => {
+        return {
+          email: res.email,
+          password: res.sub,
+          thumbnail: res.picture
+        };
+      });
+
+    return model;
+  };
+
+  const signup = model => {
+    fetch(constants.urls.signup, httpPostOptions(model));
+  };
+
+  const login = model => {
+    fetch(constants.urls.login, httpPostOptions(model))
+      .then(res => res.json())
+      .then(res => console.log(res));
   };
 
   return (
     <View style={globalStyles.container}>
-      <Signup signup={signup} />
+      <Home />
+      {/* <Login login={login} googleAuth={googleAuth} /> */}
+      {/* <Signup signup={signup} googleAuth={googleAuth} /> */}
     </View>
   );
 }
 
 export async function signInAsync() {
-  let authState = await AppAuth.authAsync(constants.oauthConfigIOS);
+  let authState = await AppAuth.authAsync(
+    isAndroid ? constants.oauthConfigAndroid : constants.oauthConfigIOS
+  );
   await cacheAuthAsync(authState);
-  console.log("signInAsync", authState);
+  // console.log("signInAsync", authState);
   return authState;
 }
 
@@ -49,7 +82,7 @@ async function cacheAuthAsync(authState) {
 export async function getCachedAuthAsync() {
   let value = await AsyncStorage.getItem(constants.storageKey);
   let authState = JSON.parse(value);
-  console.log("getCachedAuthAsync", authState);
+  // console.log("getCachedAuthAsync", authState);
   if (authState) {
     if (checkIfTokenExpired(authState)) {
       return refreshAuthAsync(authState);
@@ -66,7 +99,7 @@ function checkIfTokenExpired({ accessTokenExpirationDate }) {
 
 async function refreshAuthAsync({ refreshToken }) {
   let authState = await AppAuth.refreshAsync(
-    constants.oauthConfigIOS,
+    isAndroid ? constants.oauthConfigAndroid : constants.oauthConfigIOS,
     refreshToken
   );
   console.log("refreshAuth", authState);
@@ -76,10 +109,13 @@ async function refreshAuthAsync({ refreshToken }) {
 
 export async function signOutAsync({ accessToken }) {
   try {
-    await AppAuth.revokeAsync(constants.oauthConfigIOS, {
-      token: accessToken,
-      isClientIdProvided: true
-    });
+    await AppAuth.revokeAsync(
+      isAndroid ? constants.oauthConfigAndroid : constants.oauthConfigIOS,
+      {
+        token: accessToken,
+        isClientIdProvided: true
+      }
+    );
     await AsyncStorage.removeItem(constants.storageKey);
     return null;
   } catch (e) {
