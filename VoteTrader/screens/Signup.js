@@ -12,7 +12,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 // import AES from "crypto-js/aes";
 // import SHA256 from "crypto-js/sha256";
-
+import store from "../store";
+import { googleAuth } from "../googleAuth";
 import { globalStyles, images } from "../styles/global";
 import Button from "../components/Button";
 import { constants } from "../shared/constants";
@@ -38,8 +39,12 @@ const SignupSchema = Yup.object({
     })
 });
 
-export default function Signup({ signup, googleAuth }) {
-  return (
+export default function Signup({ visibility }) {
+  const signup = model => {
+    fetch(constants.urls.signup, httpPostOptions(model));
+  };
+
+  return visibility ? (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ ...globalStyles.container, ...styles.form }}>
         <Image style={styles.logo} source={images.corona} />
@@ -67,15 +72,6 @@ export default function Signup({ signup, googleAuth }) {
               />
               <Text style={globalStyles.errorText}>
                 {props.touched.email && props.errors.email}
-              </Text>
-              <TextInput
-                style={globalStyles.input}
-                placeholder="Username"
-                onChangeText={props.handleChange("username")}
-                value={props.values.username}
-              />
-              <Text style={globalStyles.errorText}>
-                {props.touched.username && props.errors.username}
               </Text>
               <TextInput
                 style={globalStyles.input}
@@ -112,13 +108,13 @@ export default function Signup({ signup, googleAuth }) {
         </Formik>
       </View>
     </TouchableWithoutFeedback>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({
-  form: { justifyContent: "center" },
+  form: { flex: 1, justifyContent: "center" },
   logo: {
     height: 90,
-    width: 340
+    width: 370
   }
 });

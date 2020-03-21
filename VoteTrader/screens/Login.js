@@ -12,6 +12,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 
 import { globalStyles, images } from "../styles/global";
+import { constants } from "../shared/constants";
+import { googleAuth } from "../googleAuth";
 import Button from "../components/Button";
 
 const LoginSchema = Yup.object({
@@ -24,8 +26,14 @@ const LoginSchema = Yup.object({
     .min(6)
 });
 
-export default function Login({ login, googleAuth }) {
-  return (
+export default function Login({ visibility }) {
+  const login = model => {
+    fetch(constants.urls.login, httpPostOptions(model))
+      .then(res => res.json())
+      .then(res => console.log(res));
+  };
+
+  return visibility ? (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ ...globalStyles.container, ...styles.form }}>
         <Image style={styles.logo} source={images.corona} />
@@ -73,13 +81,13 @@ export default function Login({ login, googleAuth }) {
         </Formik>
       </View>
     </TouchableWithoutFeedback>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({
-  form: { justifyContent: "center" },
+  form: { flex: 1, justifyContent: "center" },
   logo: {
     height: 90,
-    width: 340
+    width: 370
   }
 });
