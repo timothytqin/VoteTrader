@@ -5,8 +5,8 @@ import FlipToggle from "react-native-flip-toggle-button";
 import store from "../store";
 import { globalStyles, images } from "../styles/global";
 
-import Login from "../screens/Login";
-import Signup from "../screens/Signup";
+import Login from "../screens/modals/Login";
+import Signup from "../screens/modals/Signup";
 
 export default function Home() {
   const [showLogin, setShowLogin] = useState(true);

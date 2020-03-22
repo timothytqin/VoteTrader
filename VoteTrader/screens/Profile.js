@@ -7,13 +7,24 @@ import Button from "../components/Button";
 import { signOutAsync, getCachedAuthAsync } from "../googleAuth";
 
 export default function Profile({ navigation }) {
+  const [profile, setProfile] = useState(store.getState().reducer.profile);
+
+  store.subscribe(() => {
+    setProfile(store.getState().reducer.profile);
+  });
+
   return (
-    <View style={{ ...globalStyles.container, ...styles.profile }}>
-      <Image
-        style={styles.pfp}
-        source={{ uri: store.getState().reducer.profile[0].thumbnail }}
-      />
-      <Text>Name</Text>
+    <View style={{ ...globalStyles.container }}>
+      <View style={styles.profile}>
+        {profile ? (
+          <View style={styles.pfp}>
+            <Image style={styles.pfp} source={{ uri: profile[0].thumbnail }} />
+          </View>
+        ) : (
+          <View />
+        )}
+        <Text>Name</Text>
+      </View>
       <Button
         text="Logout"
         onPress={async () => {
@@ -28,6 +39,7 @@ export default function Profile({ navigation }) {
 
 const styles = StyleSheet.create({
   profile: {
+    flex: 1,
     alignItems: "center",
     marginTop: 50
   },

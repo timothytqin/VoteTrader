@@ -3,7 +3,8 @@ import { StyleSheet } from "react-native";
 export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20
+    padding: 20,
+    backgroundColor: "#fff"
   },
   input: {
     borderWidth: 1,
@@ -12,7 +13,7 @@ export const globalStyles = StyleSheet.create({
     fontSize: 18,
     borderRadius: 6,
     marginHorizontal: 16,
-    marginTop: 5
+    margin: 5
   },
   errorText: {
     color: "crimson",

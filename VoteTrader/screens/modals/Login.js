@@ -10,73 +10,42 @@ import {
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
-// import AES from "crypto-js/aes";
-// import SHA256 from "crypto-js/sha256";
-import store from "../store";
-import { googleAuth, getGoogleProfile, login } from "../googleAuth";
-import { globalStyles, images } from "../styles/global";
-import Button from "../components/Button";
-import { constants } from "../shared/constants";
-import { httpPostOptions } from "../shared/http";
-import { loadProfile } from "../actions";
 
-const SignupSchema = Yup.object({
+import store from "../../store";
+import { globalStyles, images } from "../../styles/global";
+import { constants } from "../../shared/constants";
+import { httpPostOptions } from "../../shared/http";
+import { googleAuth, login, getGoogleProfile } from "../../googleAuth";
+import Button from "../../components/Button";
+
+const LoginSchema = Yup.object({
   email: Yup.string()
     .email()
-    .required(),
-  username: Yup.string()
     .required()
     .min(3),
   password: Yup.string()
     .required()
-    .min(6),
-  passwordRepeat: Yup.string()
-    .required()
-    .when("password", {
-      is: val => (val && val.length > 0 ? true : false),
-      then: Yup.string().oneOf(
-        [Yup.ref("password")],
-        "Both password need to be the same"
-      )
-    })
+    .min(6)
 });
 
-export default function Signup({ visibility }) {
-  const signup = model => {
-    console.log("Signing up user: " + JSON.stringify(model));
-    fetch(
-      constants.server.ngrok + constants.urls.signup,
-      httpPostOptions(model)
-    )
-      .then(res => res.json())
-      .then(res => {
-        store.dispatch(loadProfile(res));
-      });
-  };
-
+export default function Login({ visibility }) {
   return visibility ? (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ ...globalStyles.container, ...styles.form }}>
         <Image style={styles.logo} source={images.corona} />
         <Formik
-          initialValues={{
-            email: "",
-            password: "",
-            passwordRepeat: ""
-          }}
-          validationSchema={SignupSchema}
+          initialValues={{ email: "", password: "" }}
+          validationSchema={LoginSchema}
           onSubmit={(values, actions) => {
-            console.log("Submit button clicked");
             actions.resetForm();
-            // values.password = SHA256(values.password);
-            signup(values);
+            login(values);
           }}
         >
           {props => (
             <View>
               <TextInput
                 style={globalStyles.input}
-                placeholder="Email Address"
+                placeholder="Email"
                 onChangeText={props.handleChange("email")}
                 value={props.values.email}
               />
@@ -93,26 +62,16 @@ export default function Signup({ visibility }) {
               <Text style={globalStyles.errorText}>
                 {props.touched.password && props.errors.password}
               </Text>
-              <TextInput
-                style={globalStyles.input}
-                placeholder="Repeat Password"
-                onChangeText={props.handleChange("passwordRepeat")}
-                value={props.values.passwordRepeat}
-                secureTextEntry={true}
-              />
-              <Text style={globalStyles.errorText}>
-                {props.touched.passwordRepeat && props.errors.passwordRepeat}
-              </Text>
               <Button text="submit" onPress={props.handleSubmit} />
               <Text style={globalStyles.orText}>OR</Text>
               <Button
-                text="Sign up with Google"
+                text="Sign in with Google"
                 onPress={async () => {
                   await googleAuth();
                   const profile = await getGoogleProfile(
                     store.getState().reducer.authenticated.accessToken
                   );
-                  signup(profile);
+                  login({ email: profile.email, password: profile.password });
                 }}
               />
             </View>
