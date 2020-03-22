@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
 
 import store from "../store";
@@ -17,7 +17,6 @@ export default function Profile({ navigation }) {
       <Button
         text="Logout"
         onPress={async () => {
-          // console.log(navigation);
           const cachedAuth = await getCachedAuthAsync();
           signOutAsync(cachedAuth);
           navigation.navigate("Home");

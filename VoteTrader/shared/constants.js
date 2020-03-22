@@ -1,6 +1,7 @@
 export const constants = {
   server: {
-    localhost: "http://localhost:3000"
+    localhost: "http://localhost:3000",
+    ngrok: "http://b1466f27.ngrok.io"
   },
   urls: {
     login: "/auth/login",

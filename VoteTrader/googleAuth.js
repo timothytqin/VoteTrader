@@ -9,10 +9,7 @@ import { httpPostOptions } from "./shared/http";
 const isAndroid = () => Platform.OS === "android";
 
 export const login = model => {
-  fetch(
-    constants.server.localhost + constants.urls.login,
-    httpPostOptions(model)
-  )
+  fetch(constants.server.ngrok + constants.urls.login, httpPostOptions(model))
     .then(res => res.json())
     .then(res => {
       if (res) {
@@ -106,6 +103,7 @@ export async function signOutAsync({ accessToken }) {
     );
   }
   await AsyncStorage.removeItem(constants.asyncStorageKey.auth);
+  await store.dispatch(loadProfile(null));
   await store.dispatch(authenticate(null));
   console.log(
     "Logged out, the storage: " +

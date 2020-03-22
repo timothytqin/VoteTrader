@@ -45,7 +45,7 @@ export default function Signup({ visibility }) {
   const signup = model => {
     console.log("Signing up user: " + JSON.stringify(model));
     fetch(
-      constants.server.localhost + constants.urls.signup,
+      constants.server.ngrok + constants.urls.signup,
       httpPostOptions(model)
     )
       .then(res => res.json())
