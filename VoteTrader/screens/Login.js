@@ -11,9 +11,11 @@ import {
 import { Formik } from "formik";
 import * as Yup from "yup";
 
+import store from "../store";
 import { globalStyles, images } from "../styles/global";
 import { constants } from "../shared/constants";
-import { googleAuth } from "../googleAuth";
+import { httpPostOptions } from "../shared/http";
+import { googleAuth, login, getGoogleProfile } from "../googleAuth";
 import Button from "../components/Button";
 
 const LoginSchema = Yup.object({
@@ -27,12 +29,6 @@ const LoginSchema = Yup.object({
 });
 
 export default function Login({ visibility }) {
-  const login = model => {
-    fetch(constants.urls.login, httpPostOptions(model))
-      .then(res => res.json())
-      .then(res => console.log(res));
-  };
-
   return visibility ? (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ ...globalStyles.container, ...styles.form }}>
@@ -70,10 +66,12 @@ export default function Login({ visibility }) {
               <Text style={globalStyles.orText}>OR</Text>
               <Button
                 text="Sign in with Google"
-                onPress={() => {
-                  googleAuth().then(res => {
-                    login(res);
-                  });
+                onPress={async () => {
+                  await googleAuth();
+                  const profile = await getGoogleProfile(
+                    store.getState().reducer.authenticated.accessToken
+                  );
+                  login({ email: profile.email, password: profile.password });
                 }}
               />
             </View>

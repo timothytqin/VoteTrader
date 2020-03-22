@@ -4,13 +4,17 @@ const User = require('../models/user-model');
 
 router.post("/login", (req, res) => {
   User.find({email: req.body.email, password: req.body.password}, (err, data) => {
-    res.send(data.length === 1);
+    if(data.length > 0) {
+      console.log("Logging in: " + JSON.stringify(data));
+      res.send(data);
+    }
   });
 });
 
 router.post("/signup", (req, res) => {
   new User(req.body).save().then(newUser => {
-    console.log("new user created: " + newUser);
+    console.log("User created: " + newUser);
+    res.send(newUser);
   });
 });
 

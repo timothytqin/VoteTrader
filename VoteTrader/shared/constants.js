@@ -1,7 +1,10 @@
 export const constants = {
+  server: {
+    localhost: "http://localhost:3000"
+  },
   urls: {
-    login: "http://localhost:3000/auth/login",
-    signup: "http://localhost:3000/auth/signup"
+    login: "/auth/login",
+    signup: "/auth/signup"
   },
   oauthConfigIOS: {
     issuer: "https://accounts.google.com",
@@ -15,5 +18,8 @@ export const constants = {
     clientId:
       "430219175681-honkp3d4epf8dh3lh0oeania0duonnej.apps.googleusercontent.com"
   },
-  storageKey: "@MyApp:CustomGoogleOAuthKey"
+  asyncStorageKey: {
+    auth: "votetraderauth",
+    profile: "votetraderprofile"
+  }
 };

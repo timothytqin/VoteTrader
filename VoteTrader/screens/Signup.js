@@ -13,10 +13,12 @@ import * as Yup from "yup";
 // import AES from "crypto-js/aes";
 // import SHA256 from "crypto-js/sha256";
 import store from "../store";
-import { googleAuth } from "../googleAuth";
+import { googleAuth, getGoogleProfile, login } from "../googleAuth";
 import { globalStyles, images } from "../styles/global";
 import Button from "../components/Button";
 import { constants } from "../shared/constants";
+import { httpPostOptions } from "../shared/http";
+import { loadProfile } from "../actions";
 
 const SignupSchema = Yup.object({
   email: Yup.string()
@@ -41,7 +43,15 @@ const SignupSchema = Yup.object({
 
 export default function Signup({ visibility }) {
   const signup = model => {
-    fetch(constants.urls.signup, httpPostOptions(model));
+    console.log("Signing up user: " + JSON.stringify(model));
+    fetch(
+      constants.server.localhost + constants.urls.signup,
+      httpPostOptions(model)
+    )
+      .then(res => res.json())
+      .then(res => {
+        store.dispatch(loadProfile(res));
+      });
   };
 
   return visibility ? (
@@ -51,12 +61,12 @@ export default function Signup({ visibility }) {
         <Formik
           initialValues={{
             email: "",
-            username: "",
             password: "",
             passwordRepeat: ""
           }}
           validationSchema={SignupSchema}
           onSubmit={(values, actions) => {
+            console.log("Submit button clicked");
             actions.resetForm();
             // values.password = SHA256(values.password);
             signup(values);
@@ -97,10 +107,12 @@ export default function Signup({ visibility }) {
               <Text style={globalStyles.orText}>OR</Text>
               <Button
                 text="Sign up with Google"
-                onPress={() => {
-                  googleAuth().then(res => {
-                    signup(res);
-                  });
+                onPress={async () => {
+                  await googleAuth();
+                  const profile = await getGoogleProfile(
+                    store.getState().reducer.authenticated.accessToken
+                  );
+                  signup(profile);
                 }}
               />
             </View>

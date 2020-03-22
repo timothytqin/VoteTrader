@@ -10,10 +10,17 @@ import Signup from "../screens/Signup";
 
 export default function Home() {
   const [showLogin, setShowLogin] = useState(true);
+  const [authenticated, setAuthenticated] = useState(
+    store.getState().reducer.authenticated
+  );
+
+  store.subscribe(() => {
+    setAuthenticated(store.getState().reducer.authenticated);
+  });
 
   return (
     <View style={globalStyles.container}>
-      <Modal visible={store.getState().reducer.authenticated === null}>
+      <Modal visible={!authenticated}>
         <View style={styles.modal}>
           <View style={styles.form}>
             <Login visibility={showLogin} />

@@ -5,7 +5,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import Home from "../screens/Home";
-import Login from "../screens/Login";
+import Profile from "../screens/Profile";
+import ActiveTrades from "../screens/ActiveTrades";
 
 const Tab = createBottomTabNavigator();
 
@@ -23,11 +24,20 @@ export default HomeTabNavBar = () => {
           }}
         />
         <Tab.Screen
-          name="Login"
-          component={Login}
+          name="Trades"
+          component={ActiveTrades}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MaterialIcons name="home" size={size} color={color} />
+              <MaterialIcons name="swap-horiz" size={size} color={color} />
+            )
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="perm-identity" size={size} color={color} />
             )
           }}
         />

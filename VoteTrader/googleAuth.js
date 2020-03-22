@@ -1,19 +1,40 @@
 import * as AppAuth from "expo-app-auth";
-import { Platform, AsyncStorage } from "react-native";
+import { Platform, AsyncStorage, Alert } from "react-native";
 
 import store from "./store";
-import { authenticate } from "./actions";
+import { authenticate, loadProfile } from "./actions";
 import { constants } from "./shared/constants";
+import { httpPostOptions } from "./shared/http";
 
 const isAndroid = () => Platform.OS === "android";
 
-export const googleAuth = async () => {
-  const authState = await signInAsync();
-  store.dispatch(authenticate(authState));
+export const login = model => {
+  fetch(
+    constants.server.localhost + constants.urls.login,
+    httpPostOptions(model)
+  )
+    .then(res => res.json())
+    .then(res => {
+      if (res) {
+        console.log(
+          "Authenticated: " +
+            JSON.stringify(store.getState().reducer.authenticated)
+        );
+        store.dispatch(authenticate(model));
+        store.dispatch(loadProfile(res));
+        cacheAuthAsync(constants.asyncStorageKey.auth, model);
+      }
+    });
+};
 
+export const googleAuth = async () => {
+  const authState = await googleSignInAsync();
+  store.dispatch(authenticate(authState));
+};
+
+export const getGoogleProfile = async token => {
   const model = await fetch(
-    "https://www.googleapis.com/oauth2/v3/userinfo?access_token=" +
-      authState.accessToken
+    "https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + token
   )
     .then(res => res.json())
     .then(res => {
@@ -26,26 +47,30 @@ export const googleAuth = async () => {
 
   return model;
 };
-export async function signInAsync() {
+
+// export async function signInAsync() {
+//   let authState = await AppAuth.authAsync(
+//     isAndroid ? constants.oauthConfigAndroid : constants.oauthConfigIOS
+//   );
+//   await cacheAuthAsync(authState);
+//   return authState;
+// }
+
+export async function googleSignInAsync() {
   let authState = await AppAuth.authAsync(
     isAndroid ? constants.oauthConfigAndroid : constants.oauthConfigIOS
   );
-  await cacheAuthAsync(authState);
-  // console.log("signInAsync", authState);
+  await cacheAuthAsync(constants.asyncStorageKey.auth, authState);
   return authState;
 }
 
-async function cacheAuthAsync(authState) {
-  return await AsyncStorage.setItem(
-    constants.storageKey,
-    JSON.stringify(authState)
-  );
+export async function cacheAuthAsync(key, authState) {
+  return await AsyncStorage.setItem(key, JSON.stringify(authState));
 }
 
 export async function getCachedAuthAsync() {
-  let value = await AsyncStorage.getItem(constants.storageKey);
+  let value = await AsyncStorage.getItem(constants.asyncStorageKey.auth);
   let authState = JSON.parse(value);
-  // console.log("getCachedAuthAsync", authState);
   if (authState) {
     if (checkIfTokenExpired(authState)) {
       return refreshAuthAsync(authState);
@@ -71,7 +96,7 @@ async function refreshAuthAsync({ refreshToken }) {
 }
 
 export async function signOutAsync({ accessToken }) {
-  try {
+  if (accessToken) {
     await AppAuth.revokeAsync(
       isAndroid ? constants.oauthConfigAndroid : constants.oauthConfigIOS,
       {
@@ -79,9 +104,11 @@ export async function signOutAsync({ accessToken }) {
         isClientIdProvided: true
       }
     );
-    await AsyncStorage.removeItem(constants.storageKey);
-    return null;
-  } catch (e) {
-    alert(`Failed to revoke token: ${e.message}`);
   }
+  await AsyncStorage.removeItem(constants.asyncStorageKey.auth);
+  await store.dispatch(authenticate(null));
+  console.log(
+    "Logged out, the storage: " +
+      JSON.stringify(AsyncStorage.getItem(constants.asyncStorageKey.auth))
+  );
 }
