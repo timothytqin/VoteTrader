@@ -28,5 +28,5 @@ export const globalStyles = StyleSheet.create({
 });
 
 export const images = {
-  corona: require("../assets/corona.png"),
+  corona: require("../assets/corona.png")
 };

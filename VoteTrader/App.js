@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Platform, AsyncStorage, StyleSheet, Text, View } from "react-native";
-import * as AppAuth from "expo-app-auth";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import { Provider } from "react-redux";
 
 import Router from "./routes/HomeTabNavBar";
 
 import store from "./store";
-import { authenticate, loadProfile } from "./actions";
 import { getCachedAuthAsync, login, getGoogleProfile } from "./auth";
 import { globalStyles } from "./styles/global";
 
 export const isAndroid = () => Platform.OS === "android";
+const Stack = createStackNavigator();
 
 export default function App() {
   const [done, setDone] = useState(false);
@@ -25,12 +26,8 @@ export default function App() {
             email: googleProfile.email,
             password: googleProfile.password
           });
-          // console.log("google sign on");
-          // await store.dispatch(authenticate(cachedAuth));
         } else {
           await login(cachedAuth);
-          // console.log("email/password sign on");
-          // await store.dispatch(authenticate(cachedAuth));
         }
       }
       setDone(true);
@@ -40,7 +37,11 @@ export default function App() {
   return done ? (
     <Provider store={store}>
       <View style={globalStyles.container}>
-        <Router />
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Root" component={Router} />
+          </Stack.Navigator>
+        </NavigationContainer>
       </View>
     </Provider>
   ) : (
