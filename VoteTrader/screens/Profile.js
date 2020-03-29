@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, Image } from "react-native";
 import store from "../store";
 import { globalStyles } from "../styles/global";
 import Button from "../components/Button";
-import { signOutAsync, getCachedAuthAsync } from "../googleAuth";
+import { signOutAsync, getCachedAuthAsync } from "../auth";
 
 export default function Profile({ navigation }) {
   const [profile, setProfile] = useState(store.getState().reducer.profile);

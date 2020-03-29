@@ -6,11 +6,12 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import Home from "../screens/Home";
 import Profile from "../screens/Profile";
-import ActiveTrades from "../screens/ActiveTrades";
+import Trades from "./TradeNavBar";
 
 const Tab = createBottomTabNavigator();
 
-export default HomeTabNavBar = () => {
+export default function HomeTabNavBar() {
+  // navigation.setOptions({ headerTitle: getHeaderTitle(route) });
   return (
     <NavigationContainer initialRouteName="Home">
       <Tab.Navigator>
@@ -25,7 +26,7 @@ export default HomeTabNavBar = () => {
         />
         <Tab.Screen
           name="Trades"
-          component={ActiveTrades}
+          component={Trades}
           options={{
             tabBarIcon: ({ color, size }) => (
               <MaterialIcons name="swap-horiz" size={size} color={color} />
@@ -44,6 +45,6 @@ export default HomeTabNavBar = () => {
       </Tab.Navigator>
     </NavigationContainer>
   );
-};
+}
 
 const styles = StyleSheet.create({});

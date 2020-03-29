@@ -7,12 +7,13 @@ import Router from "./routes/HomeTabNavBar";
 
 import store from "./store";
 import { authenticate, loadProfile } from "./actions";
-import { getCachedAuthAsync, login, getGoogleProfile } from "./googleAuth";
+import { getCachedAuthAsync, login, getGoogleProfile } from "./auth";
 import { globalStyles } from "./styles/global";
 
 export const isAndroid = () => Platform.OS === "android";
 
 export default function App() {
+  const [done, setDone] = useState(false);
   useEffect(() => {
     (async () => {
       let cachedAuth = await getCachedAuthAsync();
@@ -32,14 +33,17 @@ export default function App() {
           // await store.dispatch(authenticate(cachedAuth));
         }
       }
+      setDone(true);
     })();
   }, []);
 
-  return (
+  return done ? (
     <Provider store={store}>
       <View style={globalStyles.container}>
         <Router />
       </View>
     </Provider>
+  ) : (
+    <View></View>
   );
 }

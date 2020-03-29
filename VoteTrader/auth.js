@@ -5,6 +5,7 @@ import store from "./store";
 import { authenticate, loadProfile } from "./actions";
 import { constants } from "./shared/constants";
 import { httpPostOptions } from "./shared/http";
+import { fetchTrades } from "./trades";
 
 const isAndroid = () => Platform.OS === "android";
 
@@ -12,6 +13,7 @@ export const login = model => {
   fetch(constants.server.ngrok + constants.urls.login, httpPostOptions(model))
     .then(res => res.json())
     .then(res => {
+      console.log("Res: " + res);
       if (res) {
         console.log(
           "Authenticated: " +
@@ -19,8 +21,19 @@ export const login = model => {
         );
         store.dispatch(authenticate(model));
         store.dispatch(loadProfile(res));
+        fetchTrades({});
         cacheAuthAsync(constants.asyncStorageKey.auth, model);
       }
+    });
+};
+
+export const signup = model => {
+  console.log("Signing up user: " + JSON.stringify(model));
+  fetch(constants.server.ngrok + constants.urls.signup, httpPostOptions(model))
+    .then(res => res.json())
+    .then(res => {
+      store.dispatch(loadProfile(res));
+      fetchTrades({});
     });
 };
 
@@ -87,7 +100,7 @@ async function refreshAuthAsync({ refreshToken }) {
     isAndroid ? constants.oauthConfigAndroid : constants.oauthConfigIOS,
     refreshToken
   );
-  console.log("refreshAuth", authState);
+  console.log("Refresh Auth: " + JSON.stringify(authState));
   await cacheAuthAsync(authState);
   return authState;
 }

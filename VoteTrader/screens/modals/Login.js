@@ -15,7 +15,7 @@ import store from "../../store";
 import { globalStyles, images } from "../../styles/global";
 import { constants } from "../../shared/constants";
 import { httpPostOptions } from "../../shared/http";
-import { googleAuth, login, getGoogleProfile } from "../../googleAuth";
+import { googleAuth, login, getGoogleProfile } from "../../auth";
 import Button from "../../components/Button";
 
 const LoginSchema = Yup.object({

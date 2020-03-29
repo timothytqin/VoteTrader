@@ -1,11 +1,13 @@
 export const constants = {
   server: {
     localhost: "http://localhost:3000",
-    ngrok: "http://b1466f27.ngrok.io"
+    ngrok: "http://a987460c.ngrok.io"
   },
   urls: {
     login: "/auth/login",
-    signup: "/auth/signup"
+    signup: "/auth/signup",
+    getTrades: "/trade/",
+    createTrade: "/trade/create"
   },
   oauthConfigIOS: {
     issuer: "https://accounts.google.com",

@@ -13,7 +13,7 @@ import * as Yup from "yup";
 // import AES from "crypto-js/aes";
 // import SHA256 from "crypto-js/sha256";
 import store from "../../store";
-import { googleAuth, getGoogleProfile, login } from "../../googleAuth";
+import { googleAuth, getGoogleProfile, signup } from "../../auth";
 import { globalStyles, images } from "../../styles/global";
 import Button from "../../components/Button";
 import { constants } from "../../shared/constants";
@@ -42,18 +42,6 @@ const SignupSchema = Yup.object({
 });
 
 export default function Signup({ visibility }) {
-  const signup = model => {
-    console.log("Signing up user: " + JSON.stringify(model));
-    fetch(
-      constants.server.ngrok + constants.urls.signup,
-      httpPostOptions(model)
-    )
-      .then(res => res.json())
-      .then(res => {
-        store.dispatch(loadProfile(res));
-      });
-  };
-
   return visibility ? (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ ...globalStyles.container, ...styles.form }}>
