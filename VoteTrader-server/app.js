@@ -12,7 +12,7 @@ mongoose.connect(keys.mongodb.dbURI, () => {
   console.log("connected to mongodb");
 });
 
-app.use("/auth", authRoutes);
+app.use("/u", authRoutes);
 app.use("/trade", tradeRoutes);
 
 app.listen(3000, () => {

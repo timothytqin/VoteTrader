@@ -32,7 +32,7 @@ const TradeSchema = Yup.object({
   comment: Yup.string()
 });
 
-export default function AddTrade() {
+export default function AddTrade({ modalOpen }) {
   const [date, setDate] = useState(new Date());
   const [tags, setTags] = useState({
     tag: "",
@@ -44,7 +44,6 @@ export default function AddTrade() {
     const currentDate = selectedDate || date;
     setDatepickerOpen(Platform.OS === "ios");
     setDate(currentDate);
-    console.log(currentDate);
   };
 
   const makeTrade = model => {
@@ -68,16 +67,16 @@ export default function AddTrade() {
           }}
           validationSchema={TradeSchema}
           onSubmit={(values, actions) => {
-            values.email = store.getState().reducer.profile[0].email;
+            values.email = store.getState().reducer.profile.email;
             values.date = new Date().getTime();
-            values.tags = tags;
-            console.log(values);
+            values.tags = tags.tagsArray;
             makeTrade(values);
             actions.resetForm();
             setTags({
               tag: "",
               tagsArray: []
             });
+            modalOpen(false);
           }}
         >
           {props => (

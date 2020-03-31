@@ -8,7 +8,22 @@ export const loadProfile = data => ({
   payload: data
 });
 
-export const loadTrades = data => ({
-  type: "LOAD_TRADES",
+export const loadHistoryTrades = data => ({
+  type: "LOAD_HISTORY_TRADES",
+  payload: data
+});
+
+export const loadMyTrades = data => ({
+  type: "LOAD_MY_TRADES",
+  payload: data
+});
+
+export const loadActiveTrades = data => ({
+  type: "LOAD_ACTIVE_TRADES",
+  payload: data
+});
+
+export const setTradeFilters = data => ({
+  type: "SET_TRADE_FILTERS",
   payload: data
 });

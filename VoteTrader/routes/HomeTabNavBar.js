@@ -7,15 +7,15 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Home from "../screens/Home";
 import Profile from "../screens/Profile";
 import Trades from "./TradeNavBar";
+import Header from "../components/Header";
 import store from "../store";
 
 const Tab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = "Home";
 
-export default function HomeTabNavBar({ navigation, route }) {
-  navigation.setOptions({ headerTitle: getHeaderTitle(route) });
+export default function HomeTabNavBar() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator initialRouteName>
       <Tab.Screen
         name="Home"
         component={Home}
@@ -48,17 +48,3 @@ export default function HomeTabNavBar({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({});
-
-function getHeaderTitle(route) {
-  const routeName =
-    route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
-
-  switch (routeName) {
-    case "Home":
-      return "Home";
-    case "Trades":
-      return "Trades";
-    case "Profile":
-      return store.getState().reducer.profile[0].email;
-  }
-}

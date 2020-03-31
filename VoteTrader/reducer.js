@@ -1,9 +1,25 @@
 import { combineReducers } from "redux";
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
   authenticated: null,
-  profile: null,
-  trades: null
+  profile: {
+    _id: "",
+    username: "",
+    email: "",
+    password: "",
+    thumbnail: ""
+  },
+  trades: {
+    history: [],
+    myTrades: [],
+    activeTrades: []
+  },
+  filters: {
+    author: "",
+    policy: "",
+    scope: "",
+    tags: []
+  }
 };
 
 const reducer = (state = INITIAL_STATE, action) => {
@@ -15,9 +31,27 @@ const reducer = (state = INITIAL_STATE, action) => {
     case "LOAD_PROFILE":
       console.log("Loading Profile: " + JSON.stringify(action.payload));
       return { ...state, profile: action.payload };
-    case "LOAD_TRADES":
-      console.log("Loading Trades: " + JSON.stringify(action.payload));
-      return { ...state, trades: action.payload };
+    case "LOAD_HISTORY_TRADES":
+      console.log("Loading Trade History: " + JSON.stringify(action.payload));
+      return {
+        ...state,
+        trades: { ...state.trades, history: action.payload }
+      };
+    case "LOAD_MY_TRADES":
+      console.log("Loading My Trades: " + JSON.stringify(action.payload));
+      return {
+        ...state,
+        trades: { ...state.trades, myTrades: action.payload }
+      };
+    case "LOAD_ACTIVE_TRADES":
+      console.log("Loading Active Trades: " + JSON.stringify(action.payload));
+      return {
+        ...state,
+        trades: { ...state.trades, activeTrades: action.payload }
+      };
+    case "SET_TRADE_FILTERS":
+      console.log("Setting Trade Filters: " + JSON.stringify(action.payload));
+      return { ...state, filters: action.payload };
     default:
       return state;
   }

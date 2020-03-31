@@ -2,6 +2,7 @@ import * as AppAuth from "expo-app-auth";
 import { Platform, AsyncStorage, Alert } from "react-native";
 
 import store from "./store";
+import { INITIAL_STATE } from "./reducer";
 import { authenticate, loadProfile } from "./actions";
 import { constants } from "./shared/constants";
 import { httpPostOptions } from "./shared/http";
@@ -13,15 +14,14 @@ export const login = model => {
   fetch(constants.server.ngrok + constants.urls.login, httpPostOptions(model))
     .then(res => res.json())
     .then(res => {
-      console.log("Res: " + res);
       if (res) {
         console.log(
           "Authenticated: " +
             JSON.stringify(store.getState().reducer.authenticated)
         );
         store.dispatch(authenticate(model));
-        store.dispatch(loadProfile(res));
-        fetchTrades({});
+        store.dispatch(loadProfile(res[0]));
+        fetchTrades("Active Trades", {});
         cacheAuthAsync(constants.asyncStorageKey.auth, model);
       }
     });
@@ -33,7 +33,7 @@ export const signup = model => {
     .then(res => res.json())
     .then(res => {
       store.dispatch(loadProfile(res));
-      fetchTrades({});
+      fetchTrades("Active Trades", {});
     });
 };
 
@@ -116,7 +116,7 @@ export async function signOutAsync({ accessToken }) {
     );
   }
   await AsyncStorage.removeItem(constants.asyncStorageKey.auth);
-  await store.dispatch(loadProfile(null));
+  await store.dispatch(loadProfile(INITIAL_STATE.profile));
   await store.dispatch(authenticate(null));
   console.log(
     "Logged out, the storage: " +

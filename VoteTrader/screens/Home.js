@@ -7,50 +7,60 @@ import { globalStyles, images } from "../styles/global";
 
 import Login from "../screens/modals/Login";
 import Signup from "../screens/modals/Signup";
+import Username from "./modals/Username";
 
 export default function Home() {
   const [showLogin, setShowLogin] = useState(true);
   const [authenticated, setAuthenticated] = useState(
     store.getState().reducer.authenticated
   );
+  const [username, setUsername] = useState(
+    store.getState().reducer.profile.username
+  );
 
   store.subscribe(() => {
     setAuthenticated(store.getState().reducer.authenticated);
+    setUsername(store.getState().reducer.profile.username);
   });
 
   return (
     <View style={globalStyles.container}>
-      <Modal visible={!authenticated}>
-        <View style={styles.modal}>
-          <View style={styles.form}>
-            <Login visibility={showLogin} />
-            <Signup visibility={!showLogin} />
+      <Modal visible={!authenticated || !username}>
+        {!authenticated ? (
+          <View style={styles.modal}>
+            <View style={styles.form}>
+              <Login visibility={showLogin} />
+              <Signup visibility={!showLogin} />
+            </View>
+            <View style={styles.toggle}>
+              <FlipToggle
+                value={showLogin}
+                buttonWidth={180}
+                buttonHeight={40}
+                buttonRadius={50}
+                buttonOnColor={"#0f0"}
+                buttonOffColor={"#00f"}
+                sliderWidth={35}
+                sliderHeight={35}
+                sliderRadius={50}
+                onLabel={"Login"}
+                offLabel={"Signup"}
+                labelStyle={{
+                  color: "#000",
+                  fontWeight: "bold",
+                  fontSize: 20
+                }}
+                onToggle={() => {
+                  setShowLogin(!showLogin);
+                }}
+              />
+            </View>
           </View>
-          <View style={styles.toggle}>
-            <FlipToggle
-              value={showLogin}
-              buttonWidth={180}
-              buttonHeight={40}
-              buttonRadius={50}
-              buttonOnColor={"#0f0"}
-              buttonOffColor={"#00f"}
-              sliderWidth={35}
-              sliderHeight={35}
-              sliderRadius={50}
-              onLabel={"Login"}
-              offLabel={"Signup"}
-              labelStyle={{
-                color: "#000",
-                fontWeight: "bold",
-                fontSize: 20
-              }}
-              onToggle={() => {
-                setShowLogin(!showLogin);
-              }}
-            />
-          </View>
-        </View>
+        ) : (
+          <Username visibility={!username} />
+        )}
       </Modal>
+
       <ScrollView>
         <Image style={styles.logo} source={images.corona} />
         <Text style={styles.subHeaderText}>About Us</Text>

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import store from "../store";
 import { globalStyles } from "../styles/global";
-import Button from "../components/Button";
 import { signOutAsync, getCachedAuthAsync } from "../auth";
+
+import Button from "../components/Button";
+import Header from "../components/Header";
 
 export default function Profile({ navigation }) {
   const [profile, setProfile] = useState(store.getState().reducer.profile);
@@ -18,7 +21,7 @@ export default function Profile({ navigation }) {
       <View style={styles.profile}>
         {profile ? (
           <View style={styles.pfp}>
-            <Image style={styles.pfp} source={{ uri: profile[0].thumbnail }} />
+            <Image style={styles.pfp} source={{ uri: profile.thumbnail }} />
           </View>
         ) : (
           <View />

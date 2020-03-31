@@ -4,8 +4,9 @@ export const constants = {
     ngrok: "http://a987460c.ngrok.io"
   },
   urls: {
-    login: "/auth/login",
-    signup: "/auth/signup",
+    login: "/u/login",
+    signup: "/u/signup",
+    profile: "/u/profile",
     getTrades: "/trade/",
     createTrade: "/trade/create"
   },
